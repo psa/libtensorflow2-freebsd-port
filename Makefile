@@ -112,36 +112,35 @@ do-test:
 		//tensorflow/tools/lib_package:libtensorflow_test
 
 pre-install:
-	@${CP} ${WRKSRC}/bazel-bin/tensorflow/tools/lib_package/THIRD_PARTY_TF_C_LICENSES ${WRKDIR}/THIRD_PARTY_TF_C_LICENSES
+	@${CP} \
+		${WRKSRC}/bazel-bin/tensorflow/tools/lib_package/THIRD_PARTY_TF_C_LICENSES \
+		${WRKDIR}/THIRD_PARTY_TF_C_LICENSES
 	@${MKDIR} ${WRKDIR}/lib_package
-	@tar xz -C ${WRKDIR}/lib_package -f ${WRKSRC}/bazel-bin/tensorflow/tools/lib_package/libtensorflow.tar.gz
-	${MKDIR} ${STAGEDIR}${PREFIX}/include/tensorflow
-	${MKDIR} ${STAGEDIR}${PREFIX}/include/tensorflow/c
+	@tar xz -C ${WRKDIR}/lib_package \
+		-f ${WRKSRC}/bazel-bin/tensorflow/tools/lib_package/libtensorflow.tar.gz
 	${MKDIR} ${STAGEDIR}${PREFIX}/include/tensorflow/c/eager
-	${MKDIR} ${STAGEDIR}${PREFIX}/include/tensorflow/core
 	${MKDIR} ${STAGEDIR}${PREFIX}/include/tensorflow/core/platform
 
 do-install:
-	${INSTALL_DATA} ${WRKDIR}/lib_package/include/tensorflow/c/c_api.h ${STAGEDIR}${PREFIX}/include/tensorflow/c/c_api.h
-	${INSTALL_DATA} ${WRKDIR}/lib_package/include/tensorflow/c/c_api_experimental.h ${STAGEDIR}${PREFIX}/include/tensorflow/c/c_api_experimental.h
-	${INSTALL_DATA} ${WRKDIR}/lib_package/include/tensorflow/c/c_api_macros.h ${STAGEDIR}${PREFIX}/include/tensorflow/c/c_api_macros.h
-	${INSTALL_DATA} ${WRKDIR}/lib_package/include/tensorflow/c/tensor_interface.h ${STAGEDIR}${PREFIX}/include/tensorflow/c/tensor_interface.h
-	${INSTALL_DATA} ${WRKDIR}/lib_package/include/tensorflow/c/tf_attrtype.h ${STAGEDIR}${PREFIX}/include/tensorflow/c/tf_attrtype.h
-	${INSTALL_DATA} ${WRKDIR}/lib_package/include/tensorflow/c/tf_datatype.h ${STAGEDIR}${PREFIX}/include/tensorflow/c/tf_datatype.h
-	${INSTALL_DATA} ${WRKDIR}/lib_package/include/tensorflow/c/tf_file_statistics.h ${STAGEDIR}${PREFIX}/include/tensorflow/c/tf_file_statistics.h
-	${INSTALL_DATA} ${WRKDIR}/lib_package/include/tensorflow/c/tf_status.h ${STAGEDIR}${PREFIX}/include/tensorflow/c/tf_status.h
-	${INSTALL_DATA} ${WRKDIR}/lib_package/include/tensorflow/c/tf_tensor.h ${STAGEDIR}${PREFIX}/include/tensorflow/c/tf_tensor.h
-	${INSTALL_DATA} ${WRKDIR}/lib_package/include/tensorflow/c/tf_tstring.h ${STAGEDIR}${PREFIX}/include/tensorflow/c/tf_tstring.h
-	${INSTALL_DATA} ${WRKDIR}/lib_package/include/tensorflow/core/platform/ctstring.h ${STAGEDIR}${PREFIX}/include/tensorflow/core/platform/ctstring.h
-	${INSTALL_DATA} ${WRKDIR}/lib_package/include/tensorflow/core/platform/ctstring_internal.h ${STAGEDIR}${PREFIX}/include/tensorflow/core/platform/ctstring_internal.h
-	${INSTALL_PROGRAM} ${WRKDIR}/lib_package/lib/libtensorflow.so.${DISTVERSION} ${STAGEDIR}${PREFIX}/lib/libtensorflow.so.${DISTVERSION}
-	@${RLN} ${STAGEDIR}${PREFIX}/lib/libtensorflow.so.${DISTVERSION} ${STAGEDIR}${PREFIX}/lib/libtensorflow.so.2
-	@${RLN} ${STAGEDIR}${PREFIX}/lib/libtensorflow.so.2 ${STAGEDIR}${PREFIX}/lib/libtensorflow.so
-	${INSTALL_PROGRAM} ${WRKDIR}/lib_package/lib/libtensorflow_framework.so.${DISTVERSION} ${STAGEDIR}${PREFIX}/lib/libtensorflow_framework.so.${DISTVERSION}
-	@${RLN} ${STAGEDIR}${PREFIX}/lib/libtensorflow_framework.so.${DISTVERSION} ${STAGEDIR}${PREFIX}/lib/libtensorflow_framework.so.2
-	@${RLN} ${STAGEDIR}${PREFIX}/lib/libtensorflow_framework.so.2 ${STAGEDIR}${PREFIX}/lib/libtensorflow_framework.so
-	${INSTALL_DATA} ${WRKDIR}/lib_package/include/tensorflow/c/eager/c_api.h ${STAGEDIR}${PREFIX}/include/tensorflow/c/eager/c_api.h
-	${INSTALL_DATA} ${WRKDIR}/lib_package/include/tensorflow/c/eager/c_api_experimental.h ${STAGEDIR}${PREFIX}/include/tensorflow/c/eager/c_api_experimental.h
-	${INSTALL_DATA} ${WRKDIR}/lib_package/include/tensorflow/c/eager/dlpack.h ${STAGEDIR}${PREFIX}/include/tensorflow/c/eager/dlpack.h
+.for f in c_api.h c_api_experimental.h c_api_macros.h tensor_interface.h \
+	tf_attrtype.h tf_datatype.h tf_file_statistics.h tf_status.h \
+	tf_tensor.h tf_tstring.h \
+	eager/c_api.h eager/c_api_experimental.h eager/dlpack.h
+	${INSTALL_DATA} ${WRKDIR}/lib_package/include/tensorflow/c/${f} \
+	  ${STAGEDIR}${PREFIX}/include/tensorflow/c/${f}
+.endfor
+.for d in ctstring.h ctstring_internal.h
+	${INSTALL_DATA} \
+	  ${WRKDIR}/lib_package/include/tensorflow/core/platform/${d} \
+	  ${STAGEDIR}${PREFIX}/include/tensorflow/core/platform/${d}
+.endfor
+.for l in libtensorflow libtensorflow_framework
+	${INSTALL_PROGRAM} ${WRKDIR}/lib_package/lib/${l}.so.${DISTVERSION} \
+	  ${STAGEDIR}${PREFIX}/lib/${l}.so.${DISTVERSION}
+	@${RLN} ${STAGEDIR}${PREFIX}/lib/${l}.so.${DISTVERSION} \
+	  ${STAGEDIR}${PREFIX}/lib/${l}.so.2
+	@${RLN} ${STAGEDIR}${PREFIX}/lib/${l}.so.2 \
+	  ${STAGEDIR}${PREFIX}/lib/${l}.so
+.endfor
 
 .include <bsd.port.post.mk>
