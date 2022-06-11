@@ -21,6 +21,10 @@ BUILD_DEPENDS=	bash:shells/bash \
 		git:devel/git \
 		${PYNUMPY}
 
+FLAVORS=	default noavx
+FLAVOR?=	${FLAVORS:[1]}
+noavx_PKGNAMESUFFIX=	-noavx
+
 USES=	cpe python:3.7-3.9,build
 
 CPE_VENDOR=	google
@@ -79,16 +83,21 @@ GH_TUPLE= \
         bazelbuild:rules_closure:308b05b2419edb5c8ee0471b67a40403df940149:bazelbuild_rules_closure_308b05b2419edb5c8ee0471b67a40403df940149 \
         tensorflow:toolchains:v1.2.7:tensorflow_toolchains_v1_2_7
 
-CONFLICTS_INSTALL=	libtensorflow1
+CONFLICTS_INSTALL=	libtensorflow1 ${FLAVORS:N${FLAVOR}:S/^/libtensorflow2-/}
 
 USE_LDCONFIG=	yes
 
 OPTIONS_DEFINE=	XLA
+OPTIONS_DEFAULT_amd64=	AVX
 
-OPTIONS_RADIO=	VXG
-OPTIONS_RADIO_VXG=	AVX AVX2
+OPTIONS_SINGLE=                 CPUFEATURE
+OPTIONS_SINGLE_CPUFEATURE=      AVX AVX2 NOAVX
+.if ${FLAVOR:U} == noavx
+OPTIONS_EXCLUDE:=       ${OPTIONS_SINGLE_CPUFEATURE}
+.endif
+OPTIONS_EXCLUDE_aarch64=	AVX AVX2 NOAVX
 
-VXG_DESC=	Vector Processing Extensions
+CPUFEATURE_DESC=	Vector Processing Extensions
 
 AVX_DESC=	Enable Intel Advanced Vector Extensions (AVX)
 AVX2_DESC=	Enable Intel Advanced Vector Extensions 2 (AVX2)
@@ -96,13 +105,11 @@ AVX2_DESC=	Enable Intel Advanced Vector Extensions 2 (AVX2)
 AVX_VARS=	BAZEL_ARGS+="--copt=-mavx --host_copt=-mavx"
 AVX2_VARS=	BAZEL_ARGS+="--copt=-mavx --host_copt=-mavx" \
 		BAZEL_ARGS+="--copt=-mavx2 --host_copt=-mavx2"
+NOAVX_VARS=     BAZEL_ARGS=""
 
 XLA_DESC=	Enable Accelerated Linear Algebra (XLA)
 XLA_VARS=	TF_ENABLE_XLA=1
 XLA_VARS_OFF=	TF_ENABLE_XLA=0
-
-OPTIONS_DEFAULT_amd64=	AVX
-OPTIONS_EXCLUDE_aarch64=	AVX AVX2
 
 BAZEL_ARGS+=	--action_env=PATH=${PATH} \
 		--color=no \
