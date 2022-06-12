@@ -17,7 +17,7 @@ LICENSE_PERMS_THIRD_PARTY_TF_C_LICENSES=	dist-mirror dist-sell pkg-mirror pkg-se
 ONLY_FOR_ARCHS=	aarch64 amd64
 
 BUILD_DEPENDS=	bash:shells/bash \
-		bazel>=4.0.0:devel/bazel \
+		bazel>=4.2.2:devel/bazel \
 		git:devel/git \
 		${PYNUMPY}
 
