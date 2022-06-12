@@ -29,4 +29,9 @@ generate-gh-tuples:
 	    printf %s "$$tag" | sed 's,[^[:alpha:][:digit:]],_,g'); \
 	  printf ' \\\n	%s' "$$name:$$acct:$$tag:$$label"; \
 	  done; \
+	  awk -F\" '/TFRT_COMMIT =/{print $$2}' \
+	    $$(make -VWRKSRC)/third_party/tf_runtime/workspace.bzl | \
+	  while read tag; do \
+	  printf ' \\\n	%s' "tensorflow:runtime:$$tag:tensorflow_runtime_$$tag"; \
+	  done; \
 	  printf '\n'

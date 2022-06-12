@@ -87,7 +87,8 @@ GH_TUPLE= \
         bazelbuild:rules_swift:0.25.0:bazelbuild_rules_swift_0_25_0 \
         bazelbuild:apple_support:0.12.1:bazelbuild_apple_support_0_12_1 \
         bazelbuild:bazel-skylib:1.0.3:bazelbuild_bazel_skylib_1_0_3 \
-        bazelbuild:rules_pkg:0.2.5:bazelbuild_rules_pkg_0_2_5
+        bazelbuild:rules_pkg:0.2.5:bazelbuild_rules_pkg_0_2_5 \
+        tensorflow:runtime:093ed77f7d50f75b376f40a71ea86e08cedb8b80:tensorflow_runtime_093ed77f7d50f75b376f40a71ea86e08cedb8b80
 
 CONFLICTS_INSTALL=	libtensorflow1 ${FLAVORS:N${FLAVOR}:S/^/libtensorflow2-/}
 
@@ -126,7 +127,9 @@ BAZEL_ARGS+=	--action_env=PATH=${PATH} \
 		--subcommands \
 		--verbose_failures \
 		--worker_max_instances=${MAKE_JOBS_NUMBER}
-BAZEL_OPTS=	--output_user_root=${WRKDIR}/bazel_out
+# Batch is sub-optimal but the current version of Bazel doesn't find the
+# network and it goes into a restart loop
+BAZEL_OPTS=	--output_user_root=${WRKDIR}/bazel_out --batch
 CC?=	clang
 
 .include <bsd.port.pre.mk>
