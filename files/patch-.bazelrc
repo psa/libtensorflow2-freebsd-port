@@ -1,17 +1,17 @@
---- .bazelrc.orig	2021-09-25 06:40:15 UTC
-+++ .bazelrc
-@@ -299,6 +299,10 @@ build:windows --copt=/D_USE_MATH_DEFINES
- build:windows --host_copt=/D_USE_MATH_DEFINES
-
- # Default paths for TF_SYSTEM_LIBS
+--- .bazelrc.orig	2022-06-12 05:29:25.693648000 +0000
++++ .bazelrc	2022-06-12 05:31:34.715168000 +0000
+@@ -292,6 +292,10 @@
+ 
+ # Suppress C++ compiler warnings, otherwise build logs become 10s of MBs.
+ build:android --copt=-w
 +build:freebsd --define=PREFIX=/usr/local
 +build:freebsd --define=LIBDIR=$(PREFIX)/lib
 +build:freebsd --define=INCLUDEDIR=$(PREFIX)/include
 +build:freebsd --define=PROTOBUF_INCLUDE_PATH=$(PREFIX)/include
- build:linux --define=PREFIX=/usr
- build:linux --define=LIBDIR=$(PREFIX)/lib
- build:linux --define=INCLUDEDIR=$(PREFIX)/include
-@@ -312,6 +316,8 @@ build:macos --define=PROTOBUF_INCLUDE_PATH=$(PREFIX)/i
+ build:ios --copt=-w
+ build:linux --copt=-w
+ build:linux --host_copt=-w
+@@ -317,6 +321,8 @@
  # By default, build TF in C++ 14 mode.
  build:android --cxxopt=-std=c++14
  build:android --host_cxxopt=-std=c++14
@@ -20,3 +20,12 @@
  build:ios --cxxopt=-std=c++14
  build:ios --host_cxxopt=-std=c++14
  build:linux --cxxopt=-std=c++14
+@@ -661,7 +667,7 @@
+ build:ubsan --linkopt -lubsan
+ 
+ # Disable TFRT integration for now unless --config=tfrt is specified.
+-build      --deleted_packages=tensorflow/compiler/mlir/tfrt,tensorflow/compiler/mlir/tfrt/benchmarks,tensorflow/compiler/mlir/tfrt/jit/python_binding,tensorflow/compiler/mlir/tfrt/jit/transforms,tensorflow/compiler/mlir/tfrt/python_tests,tensorflow/compiler/mlir/tfrt/tests,tensorflow/compiler/mlir/tfrt/tests/ir,tensorflow/compiler/mlir/tfrt/tests/analysis,tensorflow/compiler/mlir/tfrt/tests/jit,tensorflow/compiler/mlir/tfrt/tests/lhlo_to_tfrt,tensorflow/compiler/mlir/tfrt/tests/tf_to_corert,tensorflow/compiler/mlir/tfrt/tests/tf_to_tfrt_data,tensorflow/compiler/mlir/tfrt/tests/saved_model,tensorflow/compiler/mlir/tfrt/transforms/lhlo_gpu_to_tfrt_gpu,tensorflow/core/runtime_fallback,tensorflow/core/runtime_fallback/conversion,tensorflow/core/runtime_fallback/kernel,tensorflow/core/runtime_fallback/opdefs,tensorflow/core/runtime_fallback/runtime,tensorflow/core/runtime_fallback/util,tensorflow/core/tfrt/common,tensorflow/core/tfrt/eager,tensorflow/core/tfrt/eager/backends/cpu,tensorflow/core/tfrt/eager/backends/gpu,tensorflow/core/tfrt/eager/core_runtime,tensorflow/core/tfrt/eager/cpp_tests/core_runtime,tensorflow/core/tfrt/gpu,tensorflow/core/tfrt/run_handler_thread_pool,tensorflow/core/tfrt/runtime,tensorflow/core/tfrt/saved_model,tensorflow/core/tfrt/graph_executor,tensorflow/core/tfrt/saved_model/tests,tensorflow/core/tfrt/tpu,tensorflow/core/tfrt/utils
++build      --deleted_packages=
+ build:tfrt --deleted_packages=
+ 
+ # Experimental configuration for building XLA GPU lowering to TFRT.
